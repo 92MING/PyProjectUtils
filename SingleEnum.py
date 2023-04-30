@@ -10,4 +10,5 @@ class SingleEnum(Enum):
             return False
         return True
 
+
 __all__ = ["SingleEnum"]
