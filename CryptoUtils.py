@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import hashlib, argon2, uuid, os, sys, crypto
-sys.modules['Crypto'] = crypto
+try:
+    sys.modules['Crypto'] = crypto
+except Exception as e:
+    print(e)
+    pass
 from crypto.Cipher import AES
 from typing import Union, Literal
 

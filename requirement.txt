@@ -1,3 +1,4 @@
 netifaces
 pycryptodome
 argon2-cffi
+pystun3
