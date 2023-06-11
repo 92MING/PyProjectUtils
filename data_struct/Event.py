@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+'''事件类，用于实现事件机制。比PYQT原生Signal輕量，不需要QObject'''
+
 from types import FunctionType, MethodType
-from typing import Callable
+from typing import Callable, Iterable
 
 class Event:
     def __init__(self, *args):
@@ -19,14 +21,17 @@ class Event:
         return self
 
     @property
-    def events(self):
+    def events(self)->tuple:
+        '''return a tuple of events'''
         return tuple(self._events)
 
     @property
-    def events_iter(self):
+    def events_iter(self)->Iterable:
+        '''return a iterator of events'''
         return iter(self._events)
 
     def addListener(self, listener:Callable):
+        '''add a listener to event'''
         if isinstance(listener,FunctionType):
             argLength = listener.__code__.co_argcount
         elif isinstance(listener,MethodType):
@@ -38,9 +43,11 @@ class Event:
         self._events.append(listener) if listener not in self.events else None
 
     def removeListener(self, listener:Callable):
+        '''remove a listener from event'''
         self._events.remove(listener)
 
     def invoke(self, *args):
+        '''invoke all listeners'''
         if len(args) < len(self.args):
             argNeeded = self.args[len(args):]
             outputStr = ""
@@ -57,9 +64,11 @@ class Event:
             event(*args)
 
     def eventsCount(self):
-        return len(self.events)
+        '''return the count of events'''
+        return len(self._events)
 
     def clear(self):
+        '''clear all events'''
         self._events.clear()
 
 __all__ = ["Event"]

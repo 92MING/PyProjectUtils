@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+'''多鍵字典，可以用多個鍵值查找對應的值'''
+
 from typing import Tuple, Sequence, Dict
-from .CryptoUtils import generateUUID
+from ..utils.CryptoUtils import generateUUID
 
 class MultiKeyDict:
 

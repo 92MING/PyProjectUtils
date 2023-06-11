@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+'''封裝了常用的加密、hash等'''
 
-import hashlib, argon2, uuid, os, sys, crypto
-try:
-    sys.modules['Crypto'] = crypto
-except Exception as e:
-    print(e)
-    pass
-from crypto.Cipher import AES
+import hashlib, argon2, uuid, os, sys
 from typing import Union, Literal
 
+try:
+    import crypto
+    sys.modules['Crypto'] = crypto
+except ImportError:
+    import Crypto as crypto
+    sys.modules['crypto'] = crypto
+from crypto.Cipher import AES
 try:
     from crypto.Util.Padding import pad as _pad, unpad as _unpad
 except ImportError:
@@ -98,10 +100,13 @@ def getMD5Hash_fromString(string, mode:Literal['hex', 'bytes']='hex'):
     '''return 32 hex string or 16 bytes'''
     return hashlib.md5(string.encode('utf-8')).hexdigest() if mode == 'hex' else hashlib.md5(string.encode('utf-8')).digest()
 def checkMD5Hash_fromFile(filePath, hash):
+    '''check if file's md5 hash is equal to hash'''
     return hash == getMD5Hash_fromFile(filePath)
 def checkMD5Hash_fromString( string, hash):
+    '''check if string's md5 hash is equal to hash'''
     return hash == getMD5Hash_fromString(string)
 def checkFileSame_byMD5Hash(file1:Union[str, 'FileInfo'], file2:Union[str, 'FileInfo']):
+    '''check if two files are same by md5 hash'''
     filePath1 = file1 if isinstance(file1, str) else file1.filePath
     filePath2 = file2 if isinstance(file2, str) else file2.filePath
     return getMD5Hash_fromFile(filePath1) == getMD5Hash_fromFile(filePath2)
@@ -125,8 +130,10 @@ def checkSHA256Hash_fromFile(filePath, hash):
     '''return 64 hex string or 32 bytes'''
     return hash == getSHA256Hash_fromFile(filePath)
 def checkSHA256Hash_fromString(string, hash):
+    '''check hash from string'''
     return hash == getSHA256Hash_fromString(string)
 def checkFileSame_bySHA256Hash(file1:Union[str, 'FileInfo'], file2:Union[str, 'FileInfo']):
+    '''check file equality with hash'''
     filePath1 = file1 if isinstance(file1, str) else file1.filePath
     filePath2 = file2 if isinstance(file2, str) else file2.filePath
     return getSHA256Hash_fromFile(filePath1) == getSHA256Hash_fromFile(filePath2)
@@ -134,20 +141,19 @@ def checkFileSame_bySHA256Hash(file1:Union[str, 'FileInfo'], file2:Union[str, 'F
 
 #region argon2
 def getArgon2Hash_fromString(string):
+    '''password encryption'''
     ph = argon2.PasswordHasher()
     return ph.hash(string)
 def checkArgon2Hash_fromString(string, hash):
+    '''password decryption'''
     ph = argon2.PasswordHasher()
     return ph.verify(hash, string)
 #endregion
 
 def generateUUID():
-    '''return len 32 UUID'''
+    '''return len 32 random ID'''
     return str((uuid.uuid5(uuid.NAMESPACE_DNS, str(uuid.uuid1()) + str(os.urandom(16))))).replace('-', '')
 
 __all__ = ['getMD5Hash_fromFile', 'getMD5Hash_fromString', 'checkMD5Hash_fromFile', 'checkMD5Hash_fromString', 'checkFileSame_byMD5Hash', 'getSHA256Hash_fromFile',
            'getSHA256Hash_fromString', 'checkSHA256Hash_fromFile', 'checkSHA256Hash_fromString', 'checkFileSame_bySHA256Hash', 'getArgon2Hash_fromString',
            'checkArgon2Hash_fromString', 'generateUUID', 'encrypt_file', 'decrypt_file']
-
-
-

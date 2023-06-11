@@ -2,3 +2,8 @@ netifaces
 pycryptodome
 argon2-cffi
 pystun3
+selenium
+beautifulsoup4
+tiktoken
+openai
+numpy

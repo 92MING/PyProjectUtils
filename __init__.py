@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+'''Python Project中常用的函數、數據結構、修飾器等'''
 
-from .GlobalValue import *
+from .utils import *
+'''常用的工具函數'''
 
-from .Event import *
-from .TimeUtils import *
-from .CryptoUtils import *
-from .OSFunctions import *
-from .SingleClass import *
-from .SingleEnum import *
-from .SingleManager import *
-from .MultiKeyDict import *
-from .ChainFunc import *
+from .base_class import *
+'''常用的基類'''
+
+from .data_struct import *
+'''常用的數據結構'''
+
+from .decorator import *
+'''常用的修飾器'''

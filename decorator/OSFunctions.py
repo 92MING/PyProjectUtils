@@ -1,28 +1,34 @@
 # -*- coding: utf-8 -*-
+'''用于跨平台的修飾器'''
+
 import platform
-from .SingleEnum import SingleEnum
-from .SingleClass import SingleClass
+from ..base_class.CrossModuleEnum import CrossModuleEnum
+from ..base_class.CrossModuleClass import CrossModuleClass
 import copy
 
-class OSType(SingleEnum):
-    win = 1
-    mac = 2
-    linux = 3
-    java = 4
+class OSType(CrossModuleEnum):
+    '''操作系统类型'''
+    WINDOWS = 1
+    MAC = 2
+    LINUS = 3
+    JAVA = 4
     @staticmethod
     def CurrentOS():
+        '''获取当前操作系统类型'''
         if platform.system() == 'Windows':
-            return OSType.win
+            return OSType.WINDOWS
         elif platform.system() == 'Darwin':
-            return OSType.mac
+            return OSType.MAC
         elif platform.system() == 'Linux':
-            return OSType.linux
+            return OSType.LINUS
         elif platform.system() == 'Java':
-            return OSType.java
+            return OSType.JAVA
         else:
             return None
 
-class OSfunction(SingleClass):
+class OSfunction(CrossModuleClass):
+    '''用于标记函数在不同操作系统下的实现'''
+
     _OSfunctions = {}
     def __new__(cls, OS:OSType, func):
         if func.__qualname__ in OSfunction._OSfunctions.keys():
@@ -52,23 +58,31 @@ class OSfunction(SingleClass):
                 return self.thisFuncs[OSType.CurrentOS().value].__get__(instance, owner)
 
 def WinFunction(func):
-    return OSfunction(OSType.win, func)
+    '''装饰器，用于标记该函数在Windows下的实现'''
+    return OSfunction(OSType.WINDOWS, func)
 def StaticWinFunction(func):
-    return staticmethod(OSfunction(OSType.win, func))
+    '''装饰器，用于标记该静态函数在Windows下的实现'''
+    return staticmethod(OSfunction(OSType.WINDOWS, func))
 
 def MacFunction(func):
-    return OSfunction(OSType.mac, func)
+    '''装饰器，用于标记该函数在Mac下的实现'''
+    return OSfunction(OSType.MAC, func)
 def StaticMacFunction(func):
-    return staticmethod(OSfunction(OSType.mac, func))
+    '''装饰器，用于标记该静态函数在Mac下的实现'''
+    return staticmethod(OSfunction(OSType.MAC, func))
 
 def LinuxFunction(func):
-    return OSfunction(OSType.linux, func)
+    '''装饰器，用于标记该函数在Linux下的实现'''
+    return OSfunction(OSType.LINUS, func)
 def StaticLinuxFunction(func):
-    return staticmethod(OSfunction(OSType.linux, func))
+    '''装饰器，用于标记该静态函数在Linux下的实现'''
+    return staticmethod(OSfunction(OSType.LINUS, func))
 
 def JavaFunction(func):
-    return OSfunction(OSType.java, func)
+    '''装饰器，用于标记该函数在Java虚拟机下的实现'''
+    return OSfunction(OSType.JAVA, func)
 def StaticJavaFunction(func):
-    return staticmethod(OSfunction(OSType.java, func))
+    '''装饰器，用于标记该静态函数在Java虚拟机下的实现'''
+    return staticmethod(OSfunction(OSType.JAVA, func))
 
 __all__ = ["OSType", "WinFunction", "StaticWinFunction", "MacFunction", "StaticMacFunction", "LinuxFunction", "StaticLinuxFunction", "JavaFunction", "StaticJavaFunction"]

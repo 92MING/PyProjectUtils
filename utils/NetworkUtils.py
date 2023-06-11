@@ -1,19 +1,22 @@
-import socket, requests
-import netifaces
+# -*- coding: utf-8 -*-
+'''封装了常用的网络操作'''
+
+import socket, requests, netifaces
 
 def getLocalIP():
-    # 获取IP地址
+    '''获取本机IP地址'''
     hostname = socket.gethostname()
     return socket.gethostbyname(hostname)
 
 def getGlobalIP():
-    # 获取外网ip地址
+    '''获取外网ip地址'''
     url = 'https://api.ipify.org'
     response = requests.get(url)
     return response.text
 
-def getSubMask():
-    ip_address = getLocalIP()
+def getSubMask(ip: str=None):
+    '''获取子网掩码（默认本地ip的子网掩码）'''
+    ip_address = getLocalIP() if ip is None else ip
     # 遍历所有网卡获取子网掩码
     for interface in netifaces.interfaces():
         addrs = netifaces.ifaddresses(interface)
@@ -22,7 +25,6 @@ def getSubMask():
                 if addr['addr'] == ip_address:
                     return addr['netmask']
     return None
-
 def checkIpInSameSubnet(ip1, ip2, submask):
     # 检查两个ip是否在同一个子网
     ip1 = [int(i) for i in ip1.split('.')]
@@ -34,8 +36,8 @@ def checkIpInSameSubnet(ip1, ip2, submask):
     return True
 
 import stun
-from .SingleEnum import SingleEnum
-class NATtype(SingleEnum):
+from source.PyProjectUtils.base_class.CrossModuleEnum import CrossModuleEnum
+class NATtype(CrossModuleEnum):
     Unknown = 0
     Blocked = 1
     OpenInternet = 2
@@ -45,7 +47,7 @@ class NATtype(SingleEnum):
     RestricPortNAT = 6
     SymmetricNAT = 7
 def get_globalIP_and_NATtype()->(str, NATtype):
-    # 获取NAT类型
+    '''获取NAT类型'''
     natType, ip, _ = stun.get_ip_info()
     if natType==stun.Blocked:
         natType = NATtype.Blocked

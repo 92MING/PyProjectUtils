@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+'''常用的全局变量操作, 無論如何import此模塊, 都會得到同一個全局變量字典。不涉及global()或者os.environ'''
+
 import sys
 from typing import Dict
 
